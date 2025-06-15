@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<setting>
+    <!-- 本文件是用来设定 机器人/PLC 与 RVSSE进行通信的相关字符串格式。
+ 具体使用方法和参数定义可以查看RVSSE使用说明或者本文件中的注释。
+ 注意注释标识符为英文的分号，并且所有键名都是英文的。
+ QSetting 不支持注释,写INI时会清除所有注释
+ Create by sunshoutong@percipio.xyz 20230908-->
+    <!-- 软件启动配置选项   -->
+    <ui>
+        <!-- 界面语言，0=英文en,1=中文zh，   -->
+        <Language type="int32" value="1" />   
+        <!-- 虚拟键盘，0=不使用，1=使用   -->
+        <VirtualKeypad type="int32" value="0" />  
+        <!-- Qss setting,0=no qss,1=dark,2=light   -->
+        <UseQss type="int32" value="0" />  
+        <!--  在工具栏显示上面三个选项的按钮,0=不显示,1=显示  -->
+        <Display type="int32" value="1" />
+    </ui>
+    <!-- 通信相关通用配置选项   
+ if you save something using a key such as "General/someKey",    
+ the key will be located in the "%General" section, not in the "General" section.   -->
+    <global>
+        <UseDelimiter type="int32" value="1" />  
+        <!-- 字符串分割符，不能使用分号，因为在INI中该符号是用来识别注释的,
+     注意与下面的 结束符 不能相同-->
+        <Delimiter type="string" value="," />    
+        <!-- 是否使用结束符，默认使用。 0=不使用, 1=使用：   -->
+        <UseEndChar type="int32" value="1" />  
+        <!-- 结束字符串，表示传输完当前指令/信息,注意与上面的 分割符不能相同    -->
+        <EndChar type="string" value="#" />  
+        <!-- 接收或者发送机器人位姿方式，0=连续接收，1=分别接收   -->
+        <PoseMode type="int32" value="0" />          
+    </global>
+    <!-- RVSSE 接收来自 机器人/PLC 的指令/信息字符串   --> 
+    <receive>
+        <!--  相机接收的命令类型数量，注意要和实际列表相同，Max<50
+        若小于列表数量则会部分命令不识别，若大于列表数量则会导致程序出错  -->
+        <Items type="int32" value="20" />
+        <!-- command对应SE或者AppCenter中int32数值(十进制或者十六进制0x19af)    -->
+        <!-- value 对应接收的命令字符串，用来识别是何种命令，最大长度<16   -->
+        <!-- 单次触发相机进行拍照，用于RVSSE主界面时进行采图和识别目标
+        默认0=返回所有识别的箱子数量,单次计划抓取箱数,可选0~BOX_MAX -->
+        <Item1 name="Trigger" type="string" value="T" command="0x20000004" />
+        <!-- 手眼标定计算，用于采集保存大于6张标定板图像后进行相机与机器人之间位姿转换矩阵计算   -->
+        <Item2 name="Calibration" type="string" value="C"  command="0x20000005" />
+        <!-- 通信心跳，通知RVSSE当前机器人/PLC仍然在传输，防止长时间无传输时RVSSE会断开链接   -->
+        <Item3 name="HeartBeat" type="string" value="H"  command="0x100000ff" />
+        <!-- 保存当前采集图像和机器人位姿，用于下一步标定时使用   -->
+        <Item4 name="SavePicPose" type="string" value="S"  command="0x30140001" />
+        <!-- 开始采集图像   -->
+        <Item5 name="StartCapture" type="string" value="Y"  command="0x20000001" />
+        <!-- 停止采集图像   -->
+        <Item6 name="StopCapture" type="string" value="N"  command="0x20000002" />
+        <!-- 机器人当前位置，用于手眼标定位姿   -->
+        <Item7 name="RobotPose" type="string" value="P"  command="0x30140103" />
+        <!-- 机器人当前位置，用于拆码垛时位姿   -->
+        <Item8 name="BcCurrentRobotPose" type="string" value="B"  command="0x30050d0d" />
+        <!-- 机器人当前位置，用于单机多图拼接时位姿   -->
+        <Item9 name="AlgcFusionPose" type="string" value="A"  command="0x20010179" />
+        <!-- 选择ROI区域,可选项0/1   -->
+        <Item10 name="ROI" type="string" value="R"  command="0x30050f11" />
+    </receive>
+
+    <!-- RVSSE 发送到 机器人/PLC 的指令/信息字符串   -->
+    <send>
+        <!--  相机发送的信息数量，注意要和实际列表相同，Max<50
+        若小于列表数量则会部分信息不识别，若大于列表数量则会导致程序出错  -->
+        <Items type="int32" value="20" />
+        <!-- 下面各项中enable=1则发送该项内容,enable=0则不发送；
+        fix=1: 固定发送default中的值，=0则发送实际值；
+        default是指：当fix=1发送的默认值    -->
+        <!-- 最高Z距离ID号,对应ASCII=97   -->
+        <Item1 name="MaxZDistance" type="string" enable="1" fix="0" default="" />   
+        <!-- 返回物品数量 ID号   -->
+        <Item2 name="ReturnObjectCount" type="string" enable="1" fix="0" default=""  />
+        <!-- 当前物品编号ID号   -->
+        <Item3 name="CurrentObjectIndex" type="string" enable="1" fix="0" default=""  />
+        <!-- 当前物品类型ID号   -->
+        <Item4 name="CurrentObjectType" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿X ID号   -->
+        <Item5 name="TargetRobotPoseX" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿Y ID号   -->
+        <Item6 name="TargetRobotPoseY" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿Z ID号   -->
+        <Item7 name="TargetRobotPoseZ" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿Rx ID号   -->
+        <Item8 name="TargetRobotPoseRx" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿Ry ID号   -->
+        <Item9 name="TargetRobotPoseRy" type="string" enable="1" fix="0" default=""  />
+        <!-- 目标机器人位姿Rz ID号,对应ASCII=108   -->
+        <Item10 name="TargetRobotPoseRz" type="string" enable="1" fix="0" default=""  />
+    </send>
+
+    <!-- 界面显示语言配置，其中Item序号与程序中宏定义要一致
+     中文界面，英文是默认，所以只需要翻译中文 -->
+    <zh>
+        <!-- 主窗口标题   -->
+        <Item1 type="string" value="RVS-SE协议配置工具" />  
+        <!-- 工具栏 按钮	-->
+        <Item2 type="string" value="新建" /> 
+        <Item3 type="string" value="打开" /> 
+        <Item4 type="string" value="保存" /> 
+        <Item5 type="string" value="退出" /> 
+        <!-- 按钮提示   -->
+        <Item6 type="string" value="新建默认配置文件" /> 
+        <Item7 type="string" value="打开一个配置文件" /> 
+        <Item8 type="string" value="保存当前文件改动" /> 
+        <Item9 type="string" value="退出关闭程序" /> 
+        <Item10 type="string" value="全局通用" /> 
+        <Item11 type="string" value="语言" /> 
+        <Item12 type="string" value="虚拟键盘" /> 
+        <Item13 type="string" value="外观颜色" /> 
+        <Item14 type="string" value="位姿模式:" /> 
+        <Item15 type="string" value="连续" /> 
+        <Item16 type="string" value="分别" /> 
+        <Item17 type="string" value="分割符:" /> 
+        <Item18 type="string" value="结束符:" /> 
+        <Item19 type="string" value="接收来自机器人的指令信息" /> 
+        <Item20 type="string" value="触发拍照:" /> 
+        <Item21 type="string" value="手眼标定:" /> 
+        <Item22 type="string" value="心跳保持:" /> 
+        <Item23 type="string" value="保存图像位姿:" /> 
+        <Item24 type="string" value="开始采图:" /> 
+        <Item25 type="string" value="停止采图:" /> 
+        <Item26 type="string" value="单次目标数量:" /> 
+        <Item27 type="string" value="机器人位姿:" /> 
+        <Item28 type="string" value="感兴趣区域:" /> 
+        <Item29 type="string" value="用户自定义:" /> 
+        <Item30 type="string" value="发送到机器人的指令信息" /> 
+        <Item31 type="string" value="最高Z距离" /> 
+        <Item32 type="string" value="点云残余信息状态" /> 
+        <Item33 type="string" value="总共物品数量" /> 
+        <Item34 type="string" value="当前物品编号" /> 
+        <Item35 type="string" value="当前物品类型" /> 
+        <Item36 type="string" value="目标机器人位姿X" />
+        <Item37 type="string" value="目标机器人位姿Y" />
+        <Item38 type="string" value="目标机器人位姿Z" />
+        <Item39 type="string" value="目标机器人位姿Rx" />
+        <Item40 type="string" value="目标机器人位姿Rz" />
+        <Item41 type="string" value="目标机器人位姿Rz" />
+    </zh>
+    <en>
+        <Item1 type="string" value="RVS-SE Protocol Tool" /> 
+        <Item2 type="string" value="New" /> 
+        <Item3 type="string" value="Open" /> 
+        <Item4 type="string" value="Save" /> 
+        <Item5 type="string" value="Exit" /> 
+        <Item6 type="string" value="Creat a default config file" /> 
+        <Item7 type="string" value="Open a config xml file" />
+        <Item8 type="string" value="Save changes to file" /> 
+        <Item9 type="string" value="Exit shutdown program" /> 
+        <Item10 type="string" value="Global and General" /> 
+        <Item11 type="string" value="Language" /> 
+        <Item12 type="string" value="Virtal Keypad" /> 
+        <Item13 type="string" value="UseQss" /> 
+        <Item14 type="string" value="Pose Mode:" /> 
+        <Item15 type="string" value="Continously" /> 
+        <Item16 type="string" value="Seperately" /> 
+        <Item17 type="string" value="Delimiter:" /> 
+        <Item18 type="string" value="EndChar:" /> 
+        <Item19 type="string" value="Receive from Robot" /> 
+        <Item20 type="string" value="Trigger:" /> 
+        <Item21 type="string" value="Calibration:" /> 
+        <Item22 type="string" value="HeartBeat:" /> 
+        <Item23 type="string" value="SavePicPose:" /> 
+        <Item24 type="string" value="Start:" /> 
+        <Item25 type="string" value="Stop:" /> 
+        <Item26 type="string" value="BoxNumber:" /> 
+        <Item27 type="string" value="RobotPose:" /> 
+        <Item28 type="string" value="ROI:" /> 
+        <Item29 type="string" value="User:" /> 
+        <Item30 type="string" value="Send to Robot" /> 
+        <Item31 type="string" value="Max Z Distance" /> 
+        <Item32 type="string" value="Point Cloud Status" /> 
+        <Item33 type="string" value="Total Object Count" /> 
+        <Item34 type="string" value="Current Object Index" /> 
+        <Item35 type="string" value="Current Object Type" /> 
+        <Item36 type="string" value="Target Robot PoseX" />
+        <Item37 type="string" value="Target Robot PoseY" />
+        <Item38 type="string" value="Target Robot PoseZ" />
+        <Item39 type="string" value="Target Robot PoseRx" />
+        <Item40 type="string" value="Target Robot PoseRy" />
+        <Item41 type="string" value="Target Robot PoseRz" />
+    </en>
+
+
+</setting>

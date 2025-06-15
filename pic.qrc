@@ -1,0 +1,25 @@
+﻿<RCC>
+    <qresource prefix="/">
+        <file>pic/direction.png</file>
+        <file>pic/parameters.png</file>
+        <file>pic/Help.png</file>
+        <file>pic/Start.png</file>
+        <file>pic/openFolder.png</file>
+        <file>pic/checkmark0.png</file>
+        <file>pic/checkmark1.png</file>
+        <file>pic/green.png</file>
+        <file>pic/red.png</file>
+        <file>pic/yellow.png</file>
+        <file>pic/RVSSE.png</file>
+        <file>pic/Camera.png</file>
+        <file>pic/CameraCalibration.png</file>
+        <file>pic/new.png</file>
+        <file>pic/open.png</file>
+        <file>pic/save.png</file>
+        <file>pic/Stop.png</file>
+        <file>pic/tool_2.png</file>
+        <file>pic/Pictures.png</file>
+        <file>pic/about.png</file>
+        <file>pic/color_wheel.png</file>
+    </qresource>
+</RCC>
